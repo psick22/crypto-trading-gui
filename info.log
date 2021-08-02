@@ -1,0 +1,17 @@
+2021-08-03 00:11:02,644 [INFO] | basic information
+2021-08-03 00:11:02,644 [WARNING] | warning
+2021-08-03 00:11:02,644 [ERROR] | error
+2021-08-03 00:12:48,307 [INFO] | basic information
+2021-08-03 00:12:48,307 [WARNING] | warning
+2021-08-03 00:12:48,307 [ERROR] | error
+2021-08-03 00:12:48,307 [INFO] | from binance connector
+2021-08-03 01:10:36,337 [INFO] | websocket opened
+2021-08-03 01:10:47,207 [ERROR] | error from callback <bound method BinanceFuturesClient.on_close of <binanace_future.BinanceFuturesClient object at 0x100cbca90>>: on_close() takes 2 positional arguments but 4 were given
+2021-08-03 01:10:47,207 [INFO] | Binance Futures Client successfully initialized
+2021-08-03 01:11:10,921 [INFO] | websocket opened
+2021-08-03 01:11:15,445 [ERROR] | error from callback <bound method BinanceFuturesClient.on_close of <binanace_future.BinanceFuturesClient object at 0x105684f10>>: on_close() takes 2 positional arguments but 4 were given
+2021-08-03 01:11:15,445 [INFO] | Binance Futures Client successfully initialized
+2021-08-03 01:11:50,615 [INFO] | Binance Futures Client successfully initialized
+2021-08-03 01:11:50,844 [INFO] | websocket opened
+2021-08-03 01:12:00,963 [INFO] | Binance Futures Client successfully initialized
+2021-08-03 01:12:01,187 [INFO] | websocket opened
