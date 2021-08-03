@@ -114,7 +114,6 @@ class StrategyEditor(tk.Frame):
                 self._additional_parameters[b_index][param["code_name"]] = None
 
         self._body_index += 1
-        return
 
     def _show_popup(self, b_index: int):
         x = self.body_widgets["parameters"][b_index].winfo_rootx()
@@ -196,12 +195,10 @@ class StrategyEditor(tk.Frame):
         if self.body_widgets['activation'][b_index].cget('text') == "OFF":
             if strategy_selected == "Technical":
                 new_strategy = TechnicalStrategy(self._exchanges[exchange], contract, exchange, timeframe, balance_pct,
-                                                 take_profit, stop_loss,
-                                                 self._additional_parameters[b_index])
+                                                 take_profit, stop_loss, self._additional_parameters[b_index])
             elif strategy_selected == "Breakout":
                 new_strategy = BreakoutStrategy(self._exchanges[exchange], contract, exchange, timeframe, balance_pct,
-                                                take_profit, stop_loss,
-                                                self._additional_parameters[b_index])
+                                                take_profit, stop_loss, self._additional_parameters[b_index])
             else:
                 return
 
@@ -211,7 +208,8 @@ class StrategyEditor(tk.Frame):
                 self.root.logging_frame.add_log(f"No historical data retrieved for {contract.symbol}")
                 return
 
-            new_strategy._check_signal()
+            if exchange == "Binance":
+                self._exchanges[exchange].subscribe_channel([contract], "aggTrade")
 
             self._exchanges[exchange].strategies[b_index] = new_strategy
 

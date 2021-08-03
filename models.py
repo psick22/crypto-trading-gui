@@ -16,7 +16,7 @@ class Candle:
             self.low = float(candle_info[3])
             self.close = float(candle_info[4])
             self.volume = float(candle_info[5])
-        elif exchange == "parese_trade":
+        elif exchange == "parse_trade":
             self.timestamp = candle_info['ts']
             self.open = candle_info["open"]
             self.high = candle_info["high"]
@@ -59,7 +59,7 @@ class OrderStatus:
 class Trade:
     def __init__(self, trade_info):
         self.time: int = trade_info['time']
-        self.contract: Contract = trade_info['tcontract']
+        self.contract: Contract = trade_info['contract']
         self.strategy: str = trade_info['strategy']
         self.side: str = trade_info['side']
         self.entry_price: float = trade_info['entry_price']

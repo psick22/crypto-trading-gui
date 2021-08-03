@@ -25,8 +25,8 @@ logger.addHandler(stream_handler)
 logger.addHandler(file_handler)
 
 if __name__ == '__main__':
-
-    binance = BinanceFuturesClient('', '', True)
+    binance = BinanceFuturesClient('b57c459c43af304beeb357b5b5eab7b607aead0a0af805428dbedae79a496331',
+                                   'dc75f5048016ca45c7812856bc6433e4665ef9c87f99882bb5f48a2fc4508ce8', True)
     root = Root(binance)
 
     root.mainloop()

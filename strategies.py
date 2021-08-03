@@ -1,5 +1,5 @@
 import logging
-from datetime import time
+import time
 from typing import Dict, List, Tuple, TYPE_CHECKING
 import pandas as pd
 from threading import Timer
@@ -39,7 +39,8 @@ class Strategy:
         logger.info(msg)
         self.logs.append({"log": msg, "displayed": False})
 
-    def parse_trades(self, price: float, size: float, timestamp: int):
+    def parse_trades(self, price: float, size: float, timestamp: int) -> str:
+
         """
         - 새로운 거래의 timestamap 비교를 통한 세가지 경우의 수
         1) 같은 캔들일 경우 ->현재 캔들을 업데이트
@@ -84,9 +85,21 @@ class Strategy:
                     'low': last_candle.close,
                     'volume': 0,
                 }
-                new_candle = Candle(candle_info, self.tf, "parsed_trade")
+                new_candle = Candle(candle_info, self.tf, "parse_trade")
                 self.candles.append(new_candle)
                 last_candle = new_candle
+
+            new_ts = last_candle.timestamp + self.tf_equiv
+            candle_info = {
+                'ts': new_ts,
+                'open': last_candle.close,
+                'high': last_candle.close,
+                'close': last_candle.close,
+                'low': last_candle.close,
+                'volume': 0,
+            }
+            new_candle = Candle(candle_info, self.tf, "parse_trade")
+            self.candles.append(new_candle)
 
             return "new_candle"
 
@@ -103,7 +116,7 @@ class Strategy:
                 'low': price,
                 'volume': size,
             }
-            new_candle = Candle(candle_info, self.tf, "parsed_trade")
+            new_candle = Candle(candle_info, self.tf, "parse_trade")
             self.candles.append(new_candle)
 
             logger.info(f"{self.exchange} New candle for {self.contract.symbol} {self.tf}")
@@ -111,7 +124,7 @@ class Strategy:
             return "new_candle"
 
     def _check_order_status(self, order_id):
-        order_status = self.client.get_order_status(order_id)
+        order_status = self.client.get_order_status(self.contract, order_id)
         if order_status is not None:
             logger.info(f"{self.exchange} order status : {order_status.status}")
 
@@ -242,7 +255,7 @@ class BreakoutStrategy(Strategy):
     def __init__(self, client, contract: Contract, exchange: str, timeframe: str, balance_pct: float,
                  take_profit: float,
                  stop_loss: float, other_params: Dict):
-        super().__init__(client, contract, exchange, timeframe, balance_pct, take_profit, stop_loss)
+        super().__init__(client, contract, exchange, timeframe, balance_pct, take_profit, stop_loss, "Breakout")
 
         self._min_volume = other_params['min_volume']
 

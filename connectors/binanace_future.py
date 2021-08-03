@@ -40,12 +40,14 @@ class BinanceFuturesClient:
         self.balances = self.get_balances()
 
         self.prices = dict()
+
         self._ws_id = 1
         self._ws = None
+
         self.strategies: Dict[int, Union[TechnicalStrategy, BreakoutStrategy]] = {}
 
         t = threading.Thread(target=self._start_ws)
-        # t.start()
+        t.start()
 
         logger.info("Binance Futures Client successfully initialized")
 
@@ -54,7 +56,6 @@ class BinanceFuturesClient:
         self.logs.append({"log": msg, "displayed": False})
 
     def _generated_signature(self, data: Dict) -> str:
-
         return hmac.new(self._secret_key.encode(), urlencode(data).encode(), hashlib.sha256).hexdigest()
 
     def _make_request(self, method: str, endpoint: str, data: Dict):
@@ -112,7 +113,6 @@ class BinanceFuturesClient:
         if raw_candles is not None:
             for candle in raw_candles:
                 candles.append(Candle(candle, interval, "binance"))
-
         return candles
 
     def get_bid_ask(self, contract: Contract) -> Dict[str, float]:
@@ -170,7 +170,7 @@ class BinanceFuturesClient:
     def cancel_order(self, contract: Contract, order_id: str) -> OrderStatus:
         data = dict()
         data['symbol'] = contract.symbol
-        data['order_id'] = order_id
+        data['orderId'] = order_id
         data['timestamp'] = int(time.time() * 1000)
         data['signature'] = self._generated_signature(data)
         order_status = self._make_request("DELETE", '/fapi/v1/order', data)
@@ -184,7 +184,7 @@ class BinanceFuturesClient:
         data = dict()
         data['timestamp'] = int(time.time() * 1000)
         data['symbol'] = contract.symbol
-        data['order_id'] = order_id
+        data['orderId'] = order_id
         data['signature'] = self._generated_signature(data)
 
         order_status = self._make_request('GET', '/fapi/v1/order', data)
@@ -194,21 +194,21 @@ class BinanceFuturesClient:
         return order_status
 
     def _start_ws(self):
-        self.ws = websocket.WebSocketApp(self._wss_url, on_open=self._on_open, on_close=self._on_close,
-                                         on_error=self._on_error,
-                                         on_message=self._on_message)
+        self._ws = websocket.WebSocketApp(self._wss_url, on_open=self._on_open, on_close=self._on_close,
+                                          on_error=self._on_error,
+                                          on_message=self._on_message)
 
         while True:
             try:
-                self.ws.run_forever()
+                self._ws.run_forever()
             except Exception as e:
                 logger.error(f"Binance error in run_forever() method : {e}")
-                time.sleep(2)
+            time.sleep(2)
 
     def _on_open(self, ws):
         logger.info("websocket opened")
         self.subscribe_channel(list(self.contracts.values()), "bookTicker")
-        self.subscribe_channel(list(self.contracts.values()), "aggTrade")
+        # self.subscribe_channel(list(self.contracts.values()), "aggTrade")
 
     def _on_close(self, ws):
         logger.warning("websocket closed")
@@ -221,7 +221,9 @@ class BinanceFuturesClient:
         data = json.loads(msg)
         if "e" in data:
             if data["e"] == 'bookTicker':
+
                 symbol = data["s"]
+
                 if symbol not in self.prices:
                     self.prices[symbol] = {'bid': float(data['b']), 'ask': float(data['a'])}
                 else:
@@ -241,8 +243,7 @@ class BinanceFuturesClient:
                 except RuntimeError as e:
                     logger.error("error while lopping through the binance strategies : ", e)
 
-
-            elif data["e"] == 'aggTrade':
+            if data["e"] == 'aggTrade':
                 symbol = data['s']
 
                 # 웹소켓 거래 데이터가 들어올때마다 등록된 전략을 실행
@@ -260,7 +261,7 @@ class BinanceFuturesClient:
             data['params'].append(contract.symbol.lower() + "@" + channel)
         data['id'] = self._ws_id
         try:
-            self.ws.send(json.dumps(data))
+            self._ws.send(json.dumps(data))
         except Exception as e:
             logger.error(f"Connection error while subscribing to {len(contracts)} {channel} updates: {e}")
 

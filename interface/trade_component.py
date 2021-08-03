@@ -66,7 +66,7 @@ class TradesWatch(tk.Frame):
 
         self.body_widgets["status_var"][t_index] = tk.StringVar()
         self.body_widgets['status'][t_index] = tk.Label(self._table_frame,
-                                                        textvariable=self.body_widgets["status-var"][t_index],
+                                                        textvariable=self.body_widgets["status_var"][t_index],
                                                         bg=BG_COLOR,
                                                         fg=FG_COLOR_2,
                                                         font=GLOBAL_FONT)
@@ -74,7 +74,7 @@ class TradesWatch(tk.Frame):
 
         self.body_widgets["pnl_var"][t_index] = tk.StringVar()
         self.body_widgets['pnl'][t_index] = tk.Label(self._table_frame,
-                                                     textvariable=self.body_widgets["pnl-var"][t_index], bg=BG_COLOR,
+                                                     textvariable=self.body_widgets["pnl_var"][t_index], bg=BG_COLOR,
                                                      fg=FG_COLOR_2,
                                                      font=GLOBAL_FONT)
         self.body_widgets['pnl'][t_index].grid(row=b_index, column=7)
