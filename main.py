@@ -1,7 +1,7 @@
 import tkinter as tk
 import logging
 
-from binanace_future import BinanceFuturesClient
+from connectors.binanace_future import BinanceFuturesClient
 
 logger = logging.getLogger()
 logger.debug("debug mode")
@@ -24,6 +24,6 @@ logger.addHandler(stream_handler)
 logger.addHandler(file_handler)
 
 if __name__ == '__main__':
-    binance = BinanceFuturesClient(True)
+    binance = BinanceFuturesClient('', '', True)
     root = tk.Tk()
     root.mainloop()
