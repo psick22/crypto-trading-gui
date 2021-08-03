@@ -4,6 +4,7 @@ from typing import Dict, List
 from connectors.binanace_future import BinanceFuturesClient
 from models import *
 from interface.styling import *
+from strategies import TechnicalStrategy, BreakoutStrategy
 
 
 class StrategyEditor(tk.Frame):
@@ -59,6 +60,7 @@ class StrategyEditor(tk.Frame):
                 {"code_name": "ema_fast", "name": "MACD Fast Length", "widget": tk.Entry, "data_type": int},
                 {"code_name": "ema_slow", "name": "MACD Slow Length", "widget": tk.Entry, "data_type": int},
                 {"code_name": "ema_signal", "name": "MACD Signal Length", "widget": tk.Entry, "data_type": int},
+                {"code_name": "rsi_length", "name": "RSI Length", "widget": tk.Entry, "data_type": int},
             ],
             "Breakout": [
                 {"code_name": "min_volume", "name": "Minimum Volume", "widget": tk.Entry, "data_type": float},
@@ -184,11 +186,35 @@ class StrategyEditor(tk.Frame):
         symbol = self.body_widgets["contract_var"][b_index].get().split('_')[0]
         timeframe = self.body_widgets["timeframe_var"][b_index].get()
         exchange = self.body_widgets["contract_var"][b_index].get().split('_')[1]
+
+        contract = self._exchanges[exchange].contracts[symbol]
+
         balance_pct = float(self.body_widgets["balance_pct"][b_index].get())
         take_profit = float(self.body_widgets["take_profit"][b_index].get())
         stop_loss = float(self.body_widgets["stop_loss"][b_index].get())
 
         if self.body_widgets['activation'][b_index].cget('text') == "OFF":
+            if strategy_selected == "Technical":
+                new_strategy = TechnicalStrategy(self._exchanges[exchange], contract, exchange, timeframe, balance_pct,
+                                                 take_profit, stop_loss,
+                                                 self._additional_parameters[b_index])
+            elif strategy_selected == "Breakout":
+                new_strategy = BreakoutStrategy(self._exchanges[exchange], contract, exchange, timeframe, balance_pct,
+                                                take_profit, stop_loss,
+                                                self._additional_parameters[b_index])
+            else:
+                return
+
+            new_strategy.candles = self._exchanges[exchange].get_historical_candles(contract, timeframe)
+
+            if len(new_strategy.candles) == 0:
+                self.root.logging_frame.add_log(f"No historical data retrieved for {contract.symbol}")
+                return
+
+            new_strategy._check_signal()
+
+            self._exchanges[exchange].strategies[b_index] = new_strategy
+
             for param in self._base_params:
                 code_name = param['code_name']
                 if code_name != "activation" and "_var" not in code_name:
@@ -197,6 +223,8 @@ class StrategyEditor(tk.Frame):
             self.root.logging_frame.add_log(f"{strategy_selected} strategy on {symbol} / {timeframe} started")
 
         else:
+            del self._exchanges[exchange].strategies[b_index]
+
             for param in self._base_params:
                 code_name = param['code_name']
                 if code_name != "activation" and "_var" not in code_name:
