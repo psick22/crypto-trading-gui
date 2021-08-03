@@ -18,6 +18,9 @@ logger = logging.getLogger()
 
 class BinanceFuturesClient:
     def __init__(self, public_key: str, secret_key: str, testnet: bool):
+
+        self.logs = []
+
         if testnet:
             self._base_url = "https://testnet.binancefuture.com"
             self._wss_url = "wss://stream.binancefuture.com/ws"
@@ -40,9 +43,13 @@ class BinanceFuturesClient:
         self._ws = None
 
         t = threading.Thread(target=self._start_ws)
-        t.start()
+        # t.start()
 
         logger.info("Binance Futures Client successfully initialized")
+
+    def _add_log(self, msg: str):
+        logger.info(msg)
+        self.logs.append({"log": msg, "displayed": False})
 
     def _generated_signature(self, data: Dict) -> str:
 
@@ -87,7 +94,7 @@ class BinanceFuturesClient:
 
         if exchange_info is not None:
             for contract in exchange_info['symbols']:
-                contracts[contract['pair']] = Contract(contract)
+                contracts[contract['symbol']] = Contract(contract)
 
         return contracts
 
@@ -207,7 +214,6 @@ class BinanceFuturesClient:
         logger.error("websocket error", msg)
 
     def _on_message(self, ws, msg: str):
-        print(msg)
 
         data = json.loads(msg)
         if "e" in data:
@@ -219,7 +225,7 @@ class BinanceFuturesClient:
                     self.prices[symbol]['bid'] = float(data['b'])
                     self.prices[symbol]['ask'] = float(data['a'])
 
-                print(self.prices[symbol])
+                self._add_log(f"[{symbol}] : {self.prices[symbol]}")
 
     def subscribe_channel(self, contracts: List[Contract], channel: str):
         data = dict()
