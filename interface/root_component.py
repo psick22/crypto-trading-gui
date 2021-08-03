@@ -4,6 +4,7 @@ import logging
 from interface.logging_component import Logging
 from interface.styling import *
 from connectors.binanace_future import BinanceFuturesClient
+from interface.trade_component import TradesWatch
 from interface.watchlist import Watchlist
 
 logger = logging.getLogger()
@@ -30,6 +31,9 @@ class Root(tk.Tk):
 
         self.logging_frame = Logging(self._left_frame, bg=BG_COLOR)
         self.logging_frame.pack(side=tk.TOP)
+
+        self._trades_frame = TradesWatch(self._right_frame, bg=BG_COLOR)
+        self._trades_frame.pack(side=tk.TOP)
 
         self._update_ui()
 
@@ -69,6 +73,7 @@ class Root(tk.Tk):
                     price_str = "{0:.{prec}f}".format(prices['ask'], prec=precision)
 
                     self._watchlist_frame.body_widgets['ask_var'][key].set(price_str)
+
         except RuntimeError as e:
             logger.error("error while looping through watchlist dictionary : ", e)
 

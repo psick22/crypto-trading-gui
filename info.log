@@ -18831,3 +18831,11 @@
 2021-08-03 14:07:22,053 [INFO] | Binance Futures Client successfully initialized
 2021-08-03 14:16:47,857 [ERROR] | Error while making GET request to /fapi/v1/account : (401) {'code': -2014, 'msg': 'API-key format invalid.'}
 2021-08-03 14:16:47,858 [INFO] | Binance Futures Client successfully initialized
+2021-08-03 14:31:43,517 [ERROR] | Error while making GET request to /fapi/v1/account : (401) {'code': -2014, 'msg': 'API-key format invalid.'}
+2021-08-03 14:31:43,517 [INFO] | Binance Futures Client successfully initialized
+2021-08-03 14:31:46,787 [ERROR] | Error while making GET request to /fapi/v1/account : (401) {'code': -2014, 'msg': 'API-key format invalid.'}
+2021-08-03 14:31:46,788 [INFO] | Binance Futures Client successfully initialized
+2021-08-03 14:32:04,762 [ERROR] | Error while making GET request to /fapi/v1/account : (401) {'code': -2014, 'msg': 'API-key format invalid.'}
+2021-08-03 14:32:04,762 [INFO] | Binance Futures Client successfully initialized
+2021-08-03 14:40:42,251 [ERROR] | Error while making GET request to /fapi/v1/account : (401) {'code': -2014, 'msg': 'API-key format invalid.'}
+2021-08-03 14:40:42,252 [INFO] | Binance Futures Client successfully initialized
